@@ -430,7 +430,7 @@ dependencies {
     implementation 'com.arthenica:ffmpeg-kit-audio:4.5.LTS'
 
     // Alerter
-    implementation 'com.tapadoo.android:alerter:7.0.1'
+    implementation 'com.github.tapadoo:alerter:7.2.4'
 
     // Shake detection
     implementation 'com.squareup:seismic:1.0.3'

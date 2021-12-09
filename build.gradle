@@ -64,6 +64,9 @@ allprojects {
 
                 // Voice RecordView
                 includeGroupByRegex 'com\\.github\\.Armen101'
+
+                // Alerter
+                includeGroupByRegex 'com\\.github\\.tapadoo'
             }
         }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
