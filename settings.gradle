@@ -11,6 +11,7 @@ include ':library:multipicker'
 include ':library:external:jsonviewer'
 include ':library:external:diff-match-patch'
 include ':library:external:dialpad'
+include ':library:external:realmfieldnameshelper'
 
 include ':matrix-sdk-android'
 include ':matrix-sdk-android-flow'
