@@ -108,6 +108,7 @@ ext.groups = [
                         'com.linkedin.dexmaker',
                         'com.mapbox.mapboxsdk',
                         'com.nulab-inc',
+                        'com.otaliastudios',
                         'com.otaliastudios.opengl',
                         'com.parse.bolts',
                         'com.pinterest',
@@ -227,7 +228,6 @@ ext.groups = [
                 regex: [
                 ],
                 group: [
-                        'com.otaliastudios',
                         'com.yqritc',
                         'im.dlg',
                         'me.dm7.barcodescanner',
