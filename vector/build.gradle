@@ -342,7 +342,12 @@ dependencies {
 =======
     implementation project(":library:external:jsonviewer")
     implementation project(":library:external:diff-match-patch")
+<<<<<<< HEAD
     implementation project(":textdrawable")
+=======
+    implementation project(":library:external:textdrawable")
+    implementation project(":autocomplete")
+>>>>>>> 3da1497d27 (Import source from https://github.com/natario1/Autocomplete)
     implementation project(":library:ui-strings")
 >>>>>>> f304e40d57 (Import source from https://github.com/amulyakhare/TextDrawable)
     implementation project(":library:ui-styles")
@@ -436,8 +441,6 @@ dependencies {
 
     // Alerter
     implementation 'com.tapadoo.android:alerter:7.0.1'
-
-    implementation 'com.otaliastudios:autocomplete:1.1.0'
 
     // Shake detection
     implementation 'com.squareup:seismic:1.0.3'
