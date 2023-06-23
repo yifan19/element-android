@@ -218,7 +218,6 @@ ext.groups = [
                 group: [
                         'com.yqritc',
                         'im.dlg',
-                        'me.dm7.barcodescanner',
                 ]
         ]
 ]
