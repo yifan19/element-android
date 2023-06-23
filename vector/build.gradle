@@ -371,6 +371,7 @@ dependencies {
     implementation project(":matrix-sdk-android-flow")
     implementation project(":library:jsonviewer")
     implementation project(":library:external:textdrawable")
+    implementation project(":library:external:autocomplete")
     implementation project(":library:ui-styles")
     implementation project(":library:core-utils")
     implementation project(":library:attachment-viewer")
@@ -469,8 +470,6 @@ dependencies {
 
     // Alerter
     implementation 'com.github.tapadoo:alerter:7.2.4'
-
-    implementation 'com.otaliastudios:autocomplete:1.1.0'
 
     // Shake detection
     implementation 'com.squareup:seismic:1.0.3'
