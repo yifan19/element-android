@@ -1,6 +1,7 @@
 include ':vector'
 include ':realmfieldnameshelper'
 include ':span'
+include ':textdrawable'
 include ':matrix-sdk-android'
 include ':matrix-sdk-android-rx'
 include ':diff-match-patch'
