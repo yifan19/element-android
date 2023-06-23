@@ -1,6 +1,7 @@
 include ':vector'
 include ':vector-config'
 include ':library:external:textdrawable'
+include ':library:external:span'
 include ':matrix-sdk-android'
 include ':library:core-utils'
 include ':library:ui-styles'
