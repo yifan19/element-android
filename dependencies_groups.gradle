@@ -215,7 +215,6 @@ ext.groups = [
                 regex: [
                 ],
                 group: [
-                        'com.amulyakhare',
                         'com.otaliastudios',
                         'com.yqritc',
                         'im.dlg',
