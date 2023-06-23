@@ -232,7 +232,6 @@ ext.groups = [
                         'com.yqritc',
                         'im.dlg',
                         'me.dm7.barcodescanner',
-                        'me.gujun.android',
                 ]
         ]
 ]
