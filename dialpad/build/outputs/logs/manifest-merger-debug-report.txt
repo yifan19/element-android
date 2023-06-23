@@ -1,0 +1,25 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml:2:1-54
+INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml:2:1-54
+INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml:2:1-54
+	package
+		ADDED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml:2:11-51
+		INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml
+		INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml:2:1-54
+uses-sdk
+INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml
+INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml
+INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml
+INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml
+		ADDED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml
+		INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml
+		ADDED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml
+		INJECTED from /home/ubuntu/.claude/jobs/0dc702b2/tmp/worktrees/2143-original/dialpad/src/main/AndroidManifest.xml
