@@ -21,7 +21,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.res.Configuration
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.StrictMode
@@ -77,7 +76,16 @@ import java.util.Locale
 import java.util.concurrent.Executors
 import javax.inject.Inject
 import androidx.work.Configuration as WorkConfiguration
-
+import com.datadog.android.core.configuration.Configuration
+import com.datadog.android.Datadog
+import com.datadog.android.privacy.TrackingConsent
+import com.datadog.android.trace.TraceConfiguration
+import com.datadog.android.trace.Trace
+import com.datadog.android.trace.AndroidTracer
+import okhttp3.OkHttpClient
+import io.opentracing.util.GlobalTracer
+import com.datadog.android.okhttp.DatadogInterceptor
+import com.datadog.android.core.sampling.RateBasedSampler
 @HiltAndroidApp
 class VectorApplication :
         Application(),
@@ -125,6 +133,22 @@ class VectorApplication :
     override fun onCreate() {
         enableStrictModeIfNeeded()
         super.onCreate()
+        val configuration = Configuration.Builder(
+            clientToken = "pubada5b8c86aecf7e53cfe9b1fffc9ec51",
+            env = "test_env",
+            variant = "ElementAndroid"
+        ).build()
+        Datadog.initialize(this, configuration, TrackingConsent.GRANTED)
+        val traceConfig = TraceConfiguration.Builder().build()
+        Trace.enable(traceConfig)
+        val tracer = AndroidTracer.Builder().build()
+        GlobalTracer.registerIfAbsent(tracer)
+
+        val okHttpClient = OkHttpClient.Builder()
+                .addInterceptor(
+                        DatadogInterceptor(listOf("yifantest.work", "joe.com"), traceSampler = RateBasedSampler(20f))
+                )
+                .build()
         appContext = this
         flipperProxy.init(matrix)
         vectorAnalytics.init()
@@ -269,7 +293,7 @@ class VectorApplication :
         MultiDex.install(this)
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
         vectorConfiguration.onConfigurationChanged()
     }

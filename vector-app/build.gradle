@@ -382,6 +382,8 @@ dependencies {
     implementation libs.dagger.hilt
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation "androidx.sharetarget:sharetarget:1.2.0"
+    implementation 'com.datadoghq:dd-sdk-android-trace:2.5.0'
+    implementation "com.datadoghq:dd-sdk-android-okhttp:2.5.0"
 
     // Flipper, debug builds only
     debugImplementation(libs.flipper.flipper) {
@@ -437,4 +439,5 @@ dependencies {
     androidTestImplementation "org.jetbrains.kotlin:kotlin-reflect:1.8.21"
     debugImplementation libs.androidx.fragmentTestingManifest
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.10'
+
 }

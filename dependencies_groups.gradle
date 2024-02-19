@@ -233,6 +233,9 @@ ext.groups = [
                         'ru.noties',
                         'xerces',
                         'xml-apis',
+                        'com.datadoghq',
+                        'io.opentracing',
+                        'com.lyft.kronos',
                 ]
         ],
 ]
