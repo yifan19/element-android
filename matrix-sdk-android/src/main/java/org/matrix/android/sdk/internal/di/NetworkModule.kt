@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,6 +35,17 @@ import org.matrix.android.sdk.internal.network.interceptors.CurlLoggingIntercept
 import org.matrix.android.sdk.internal.network.interceptors.FormattedJsonHttpLogger
 import java.util.Collections
 import java.util.concurrent.TimeUnit
+
+import com.datadog.android.core.configuration.Configuration
+import com.datadog.android.Datadog
+import com.datadog.android.privacy.TrackingConsent
+import com.datadog.android.trace.TraceConfiguration
+import com.datadog.android.trace.Trace
+import com.datadog.android.trace.AndroidTracer
+import io.opentracing.util.GlobalTracer
+import com.datadog.android.okhttp.DatadogInterceptor
+import com.datadog.android.core.sampling.RateBasedSampler
+import android.content.Context
 
 @Module
 internal object NetworkModule {
@@ -71,18 +82,32 @@ internal object NetworkModule {
             userAgentInterceptor: UserAgentInterceptor,
             httpLoggingInterceptor: HttpLoggingInterceptor,
             curlLoggingInterceptor: CurlLoggingInterceptor,
-            apiInterceptor: ApiInterceptor
+            apiInterceptor: ApiInterceptor,
+            context: Context
     ): OkHttpClient {
         val spec = ConnectionSpec.Builder(matrixConfiguration.connectionSpec).build()
         val dispatcher = Dispatcher().apply {
             maxRequestsPerHost = 20
         }
+
+        val configuration = Configuration.Builder(
+            clientToken = "pubada5b8c86aecf7e53cfe9b1fffc9ec51",
+            env = "test_env",
+            variant = "ElementAndroid"
+        ).build()
+        Datadog.initialize(context, configuration, TrackingConsent.GRANTED)
+        val traceConfig = TraceConfiguration.Builder().build()
+        Trace.enable(traceConfig)
+        val tracer = AndroidTracer.Builder().build()
+        GlobalTracer.registerIfAbsent(tracer)
+        val datadogInterceptor = DatadogInterceptor(firstPartyHosts=listOf("yifantest.work", "localhost"), traceSampler = RateBasedSampler(20f))
         return OkHttpClient.Builder()
                 // workaround for #4669
                 .protocols(listOf(Protocol.HTTP_1_1))
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(datadogInterceptor)
                 .apply {
                     if (BuildConfig.DEBUG) {
                         addNetworkInterceptor(stethoInterceptor)

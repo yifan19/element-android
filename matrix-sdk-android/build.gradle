@@ -147,6 +147,9 @@ configurations.all {
 }
 
 dependencies {
+    implementation 'com.datadoghq:dd-sdk-android-trace:2.1.0'
+    implementation "com.datadoghq:dd-sdk-android-okhttp:2.1.0"
+    implementation "com.datadoghq:dd-sdk-android-rum:2.1.0"
     implementation libs.jetbrains.coroutinesCore
     implementation libs.jetbrains.coroutinesAndroid
 
