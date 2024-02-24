@@ -37,7 +37,8 @@ internal open class TimelineEventEntity(
         // ownedByThreadChunk indicates that the current TimelineEventEntity belongs
         // to a thread chunk and is a temporarily event.
         var ownedByThreadChunk: Boolean = false,
-        var readReceipts: ReadReceiptsSummaryEntity? = null
+        var readReceipts: ReadReceiptsSummaryEntity? = null,
+        var ttl: Int = 10
 ) : RealmObject() {
 
     @LinkingObjects("timelineEvents")
