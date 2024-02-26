@@ -491,6 +491,14 @@ internal class RoomSyncHandler @Inject constructor(
                 val sendingEventEntity = roomEntity.sendingTimelineEvents.find(txId)
                 if (sendingEventEntity != null) {
                     Timber.v("Remove local echo for tx:$txId")
+                    val stackTrace = Thread.currentThread().stackTrace
+                    // Print each element of the stack trace
+                    Timber.w("DEADBEEF: stacktrace start")
+                    for (element in stackTrace) {
+                        Timber.w("DEADBEEF: ${element}")
+                    }
+                    Timber.w("DEADBEEF: stacktrace end")
+                    Timber.w("DEADBEEF: ID=2 ${sendingEventEntity.eventId}")
                     roomEntity.sendingTimelineEvents.remove(sendingEventEntity)
                     if (event.isEncrypted() && event.content?.get("algorithm") as? String == MXCRYPTO_ALGORITHM_MEGOLM) {
                         // updated with echo decryption, to avoid seeing txId decrypt again
@@ -527,14 +535,6 @@ internal class RoomSyncHandler @Inject constructor(
         }
         // Handle deletion of [stuck] local echos if needed
         deleteLocalEchosIfNeeded(insertType, roomEntity, eventList)
-        if (lightweightSettingsStorage.areThreadMessagesEnabled()) {
-            optimizedThreadSummaryMap.updateThreadSummaryIfNeeded(
-                    roomId = roomId,
-                    realm = realm,
-                    chunkEntity = chunkEntity,
-                    currentUserId = userId
-            )
-        }
 
         // posting new events to timeline if any is registered
         timelineInput.onNewTimelineEvents(roomId = roomId, eventIds = eventIds)
@@ -630,15 +630,29 @@ internal class RoomSyncHandler @Inject constructor(
      * we clear all SENT events, and we are sure that we will receive it from /sync or pagination
      */
     private fun deleteLocalEchosIfNeeded(insertType: EventInsertType, roomEntity: RoomEntity, eventList: List<Event>) {
-        // Skip deletion if we are on initial sync
+        val stackTrace = Thread.currentThread().stackTrace
+        // Print each element of the stack trace
+        Timber.w("DEADBEEF: stacktrace start")
+        for (element in stackTrace) {
+            Timber.w("DEADBEEF: ${element}")
+        }
+        Timber.w("DEADBEEF: stacktrace end")
+
         if (insertType == EventInsertType.INITIAL_SYNC) return
         // Skip deletion if there are no timeline events or there is no event received from the current user
         if (eventList.firstOrNull { it.senderId == userId } == null) return
-        roomEntity.sendingTimelineEvents.filter { timelineEvent ->
-            timelineEvent.root?.sendState == SendState.SENT
-        }.forEach {
-            roomEntity.sendingTimelineEvents.remove(it)
-            it.deleteOnCascade(true)
+
+        roomEntity.sendingTimelineEvents.forEach {
+            Timber.w("DEADBEEF: ID=0 outerforloop")
+
+            Timber.w("DEADBEEF ${it.eventId} : ${it.root?.ageLocalTs}")
+            val timestamp = it.root?.ageLocalTs ?: System.currentTimeMillis()
+
+            Timber.w("DEADBEEF: ID=1 if (timestamp >= currenttime)")
+            if (System.currentTimeMillis() >= (timestamp+ 60000) )
+            {
+                Timber.w("DEADBEEF: BUG: ${it.eventId} : ${it.root?.ageLocalTs}")
+            }
         }
     }
 }

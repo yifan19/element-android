@@ -87,6 +87,14 @@ internal class LocalEchoRepository @Inject constructor(
             }
             realm.insert(eventInsertEntity)
             val roomEntity = RoomEntity.where(realm, roomId = roomId).findFirst() ?: return@asyncTransaction
+            val stackTrace = Thread.currentThread().stackTrace
+            // Print each element of the stack trace
+            Timber.w("DEADBEEF: stacktrace start")
+            for (element in stackTrace) {
+                Timber.w("DEADBEEF: ${element}")
+            }
+            Timber.w("DEADBEEF: stacktrace end")
+            Timber.w("DEADBEEF: ID=3 ${timelineEventEntity.eventId}")
             roomEntity.sendingTimelineEvents.add(0, timelineEventEntity)
             roomSummaryUpdater.updateSendingInformation(realm, roomId)
         }
