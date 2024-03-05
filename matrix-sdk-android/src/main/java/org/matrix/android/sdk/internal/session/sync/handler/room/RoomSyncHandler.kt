@@ -340,6 +340,9 @@ internal class RoomSyncHandler @Inject constructor(
             if (event.eventId == null || event.stateKey == null || event.type == null) {
                 continue
             }
+            /**----------------------------sent----now
+             *                                  AGE
+             */
             val ageLocalTs = syncLocalTimestampMillis - (event.unsignedData?.age ?: 0)
             val eventEntity = event.toEntity(roomId, SendState.SYNCED, ageLocalTs).copyToRealmOrIgnore(realm, insertType)
             CurrentStateEventEntity.getOrCreate(realm, roomId, event.stateKey, event.type).apply {
@@ -393,6 +396,13 @@ internal class RoomSyncHandler @Inject constructor(
             syncLocalTimestampMillis: Long,
             aggregator: SyncResponsePostTreatmentAggregator
     ): ChunkEntity {
+        val stackTrace = Thread.currentThread().stackTrace
+        // Print each element of the stack trace
+        Timber.w("DEADBEEF: stacktrace start")
+        for (element in stackTrace) {
+            Timber.w("DEADBEEF: ${element}")
+        }
+        Timber.w("DEADBEEF: stacktrace end")
         val lastChunk = ChunkEntity.findLastForwardChunkOfRoom(realm, roomEntity.roomId)
         val chunkEntity = if (!isLimited && lastChunk != null) {
             lastChunk
@@ -410,7 +420,11 @@ internal class RoomSyncHandler @Inject constructor(
         val roomMemberContentsByUser = HashMap<String, RoomMemberContent?>()
 
         val optimizedThreadSummaryMap = hashMapOf<String, EventEntity>()
+        Timber.w("DEADBEEF: ID=10 START for (rawEvent in eventList)")
+
         for (rawEvent in eventList) {
+            Timber.w("DEADBEEF: ID=10 TAKEN for (rawEvent in eventList)")
+
             // It's annoying roomId is not there, but lot of code rely on it.
             // And had to do it now as copy would delete all decryption results..
             val ageLocalTs = syncLocalTimestampMillis - (rawEvent.unsignedData?.age ?: 0)
@@ -487,17 +501,18 @@ internal class RoomSyncHandler @Inject constructor(
 //            }
 
             // Try to remove local echo
+            Timber.w("DEADBEEF: ID=11 START event.unsignedData?.transactionId?.also ")
+            Timber.w("DEADBEEF: ID=21 ${event.unsignedData?.transactionId}")
             event.unsignedData?.transactionId?.also { txId ->
+                Timber.w("DEADBEEF: ID=11 TAKEN event.unsignedData?.transactionId?.also ")
                 val sendingEventEntity = roomEntity.sendingTimelineEvents.find(txId)
+                Timber.w("DEADBEEF: ID=12 START sendingEventEntity != null ")
+
                 if (sendingEventEntity != null) {
+                    Timber.w("DEADBEEF: ID=12 TAKEN sendingEventEntity != null ")
+
                     Timber.v("Remove local echo for tx:$txId")
-                    val stackTrace = Thread.currentThread().stackTrace
-                    // Print each element of the stack trace
-                    Timber.w("DEADBEEF: stacktrace start")
-                    for (element in stackTrace) {
-                        Timber.w("DEADBEEF: ${element}")
-                    }
-                    Timber.w("DEADBEEF: stacktrace end")
+
                     Timber.w("DEADBEEF: ID=2 ${sendingEventEntity.eventId}")
                     roomEntity.sendingTimelineEvents.remove(sendingEventEntity)
                     if (event.isEncrypted() && event.content?.get("algorithm") as? String == MXCRYPTO_ALGORITHM_MEGOLM) {
@@ -534,7 +549,7 @@ internal class RoomSyncHandler @Inject constructor(
             }
         }
         // Handle deletion of [stuck] local echos if needed
-        deleteLocalEchosIfNeeded(insertType, roomEntity, eventList)
+        deleteLocalEchosIfNeeded(insertType, roomEntity, eventList, syncLocalTimestampMillis)
 
         // posting new events to timeline if any is registered
         timelineInput.onNewTimelineEvents(roomId = roomId, eventIds = eventIds)
@@ -598,61 +613,28 @@ internal class RoomSyncHandler @Inject constructor(
     }
 
     /**
-     * There are multiple issues like #516 that report stuck local echo events
-     * at the bottom of each room timeline.
-     *
-     * That can happen when a message is SENT but not received back from the /sync.
-     * Until now we use unsignedData.transactionId to determine whether or not the local
-     * event should be deleted on every /sync. However, this is partially correct, lets have a look
-     * at the following scenario:
-     *
-     * [There is no Internet connection] --> [10 Messages are sent] --> [The 10 messages are in the queue] -->
-     * [Internet comes back for 1 second] --> [3 messages are sent] --> [Internet drops again] -->
-     * [No /sync response is triggered | home server can even replied with /sync but never arrived while we are offline]
-     *
-     * So the state until now is that we have 7 pending events to send and 3 sent but not received them back from /sync
-     * Subsequently, those 3 local messages will not be deleted while there is no transactionId from the /sync
-     *
-     * lets continue:
-     * [Now lets assume that in the same room another user sent 15 events] -->
-     * [We are finally back online!] -->
-     * [We will receive the 10 latest events for the room and of course sent the pending 7 messages] -->
-     * Now /sync response will NOT contain the 3 local messages so our events will stuck in the device.
-     *
-     * Someone can say, yes but it will come with the rooms/{roomId}/messages while paginating,
-     * so the problem will be solved. No that is not the case for two reasons:
-     *   1. rooms/{roomId}/messages response do not contain the unsignedData.transactionId so we cannot know which event
-     *   to delete
-     *   2. even if transactionId was there, currently we are not deleting it from the pagination
-     *
-     * ---------------------------------------------------------------------------------------------
-     * While we cannot know when a specific event arrived from the pagination (no transactionId included), after each room /sync
-     * we clear all SENT events, and we are sure that we will receive it from /sync or pagination
-     */
-    private fun deleteLocalEchosIfNeeded(insertType: EventInsertType, roomEntity: RoomEntity, eventList: List<Event>) {
-        val stackTrace = Thread.currentThread().stackTrace
-        // Print each element of the stack trace
-        Timber.w("DEADBEEF: stacktrace start")
-        for (element in stackTrace) {
-            Timber.w("DEADBEEF: ${element}")
-        }
-        Timber.w("DEADBEEF: stacktrace end")
-
+     * Data local T=1
+     * Other client T=4 T=5
+     * Sync Data should eliminate all  
+     **/
+    private fun deleteLocalEchosIfNeeded(insertType: EventInsertType, 
+    roomEntity: RoomEntity, eventList: List<Event>,
+    syncLocalTimestampMillis: Long
+    ) {
         if (insertType == EventInsertType.INITIAL_SYNC) return
         // Skip deletion if there are no timeline events or there is no event received from the current user
         if (eventList.firstOrNull { it.senderId == userId } == null) return
+        for (rawEvent in eventList) {
+            for (it in roomEntity.sendingTimelineEvents) {
+                val syncEventTime = syncLocalTimestampMillis - (rawEvent.unsignedData?.age ?: 0)
+                val localEventTime = it.root?.ageLocalTs ?: 0L
+                Timber.w("DEADBEEF: comparing ${rawEvent.eventId}:${syncEventTime} to ${it.eventId}:${localEventTime}")
 
-        roomEntity.sendingTimelineEvents.forEach {
-            Timber.w("DEADBEEF: ID=0 outerforloop")
-
-            Timber.w("DEADBEEF ${it.eventId} : ${it.root?.ageLocalTs}")
-            val timestamp = it.root?.ageLocalTs ?: System.currentTimeMillis()
-
-            Timber.w("DEADBEEF: ID=1 if (timestamp >= currenttime)")
-            if (System.currentTimeMillis() >= (timestamp+ 60000) )
-            {
-                Timber.w("DEADBEEF: BUG: ${it.eventId} : ${it.root?.ageLocalTs}")
+                if (syncEventTime > localEventTime) {
+                    Timber.w("DEADBEEF: Potential BUG: ${it.eventId} : ${it.root?.ageLocalTs}")
+                }
             }
         }
+
     }
 }

@@ -49,6 +49,7 @@ import timber.log.Timber
 import java.io.File
 import java.net.SocketTimeoutException
 import javax.inject.Inject
+import java.util.UUID
 
 private val loggerTag = LoggerTag("SyncTask", LoggerTag.SYNC)
 
@@ -104,11 +105,12 @@ internal class DefaultSyncTask @Inject constructor(
         // Maybe refresh the homeserver capabilities data we know
         getHomeServerCapabilitiesTask.execute(GetHomeServerCapabilitiesTask.Params(forceRefresh = false))
         val filter = getCurrentFilterTask.execute(Unit)
-
+        val trace_id = UUID.randomUUID().toString()
         requestParams["timeout"] = timeout.toString()
         requestParams["filter"] = filter
+        requestParams["trace_id"] = trace_id
         params.presence?.let { requestParams["set_presence"] = it.value }
-
+        Timber.e("DEADBEEF: sync request trace_id = ${trace_id} ")
         val isInitialSync = token == null
         if (isInitialSync) {
             // We might want to get the user information in parallel too
