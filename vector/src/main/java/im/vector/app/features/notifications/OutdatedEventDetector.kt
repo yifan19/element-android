@@ -18,6 +18,7 @@ package im.vector.app.features.notifications
 import im.vector.app.ActiveSessionDataSource
 import org.matrix.android.sdk.api.session.getRoom
 import javax.inject.Inject
+import timber.log.Timber
 
 class OutdatedEventDetector @Inject constructor(
         private val activeSessionDataSource: ActiveSessionDataSource
@@ -29,14 +30,19 @@ class OutdatedEventDetector @Inject constructor(
      * other device.
      */
     fun isMessageOutdated(notifiableEvent: NotifiableEvent): Boolean {
+        
         val session = activeSessionDataSource.currentValue?.orNull() ?: return false
-
+        Timber.d("DEADBEEF: ID=11, session is found, did NOT return false")
+        
         if (notifiableEvent is NotifiableMessageEvent) {
             val eventID = notifiableEvent.eventId
             val roomID = notifiableEvent.roomId
             val room = session.getRoom(roomID) ?: return false
-            return room.readService().isEventRead(eventID)
+            Timber.d("DEADBEEF: ID=12, room is found, did NOT return false")
+            val ret = room.readService().isEventRead(eventID)
+            Timber.d("DEADBEEF: ID=13, event is Read? ${ret}")
         }
+        Timber.d("DEADBEEF: ID=14 ${notifiableEvent} is not a message, returning false")
         return false
     }
 }

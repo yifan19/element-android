@@ -31,15 +31,25 @@ class NotifiableEventProcessor @Inject constructor(
 ) {
 
     fun process(queuedEvents: List<NotifiableEvent>, currentRoomId: String?, currentThreadId: String?, renderedEvents: ProcessedEvents): ProcessedEvents {
+         val stackTrace = Thread.currentThread().getStackTrace()
+         // Print each element of the stack trace
+         Timber.w("DEADBEEF: stacktrace start")
+         for (element in stackTrace) {
+             Timber.w("DEADBEEF: ${element}")
+         }
+         Timber.w("DEADBEEF: stacktrace end")
         val processedEvents = queuedEvents.map {
+            Timber.d("DEADBEEF: ID=1, ProcessedEvent")
             val type = when (it) {
-                is InviteNotifiableEvent -> if (autoAcceptInvites.hideInvites) REMOVE else KEEP
+                is InviteNotifiableEvent -> if (autoAcceptInvites.hideInvites) REMOVE
+                    .also { Timber.d("DEADBEEF: ID=2,InviteNotifiableEvent removed") }
+                    else KEEP
                 is NotifiableMessageEvent -> when {
                     it.shouldIgnoreMessageEventInRoom(currentRoomId, currentThreadId) -> REMOVE
-                            .also { Timber.d("notification message removed due to currently viewing the same room or thread") }
+                            .also { Timber.d("DEADBEEF: ID=3,notification message removed due to currently viewing the same room or thread") }
                     outdatedDetector.isMessageOutdated(it) -> REMOVE
-                            .also { Timber.d("notification message removed due to being read") }
-                    else -> KEEP
+                            .also { Timber.d("DEADBEEF: ID=4, notification message removed due to being read") }
+                    else -> KEEP.also {Timber.d("DEADBEEF: ID=5, notification message kept")}
                 }
                 is SimpleNotifiableEvent -> when (it.type) {
                     EventType.REDACTION -> REMOVE
