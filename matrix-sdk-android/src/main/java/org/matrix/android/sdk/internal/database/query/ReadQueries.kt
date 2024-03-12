@@ -25,6 +25,7 @@ import org.matrix.android.sdk.internal.database.model.ReadMarkerEntity
 import org.matrix.android.sdk.internal.database.model.ReadReceiptEntity
 import org.matrix.android.sdk.internal.database.model.TimelineEventEntity
 import org.matrix.android.sdk.internal.database.model.getThreadId
+import timber.log.Timber
 
 internal fun isEventRead(
         realmConfiguration: RealmConfiguration,
@@ -33,10 +34,16 @@ internal fun isEventRead(
         eventId: String?,
         shouldCheckIfReadInEventsThread: Boolean
 ): Boolean {
+    Timber.w("DEADBEEF: ID=21 START")
     if (userId.isNullOrBlank() || roomId.isNullOrBlank() || eventId.isNullOrBlank()) {
+        Timber.w("DEADBEEF: ID=21 TAKEN")
+        Timber.w("DEADBEEF: ID=22 false")
         return false
     }
+    Timber.w("DEADBEEF: ID=22 START")
     if (LocalEcho.isLocalEchoId(eventId)) {
+    Timber.w("DEADBEEF: ID=22 TAKEN")
+    Timber.w("DEADBEEF: ID=23 true")        
         return true
     }
 
@@ -44,13 +51,14 @@ internal fun isEventRead(
         val eventToCheck = TimelineEventEntity.where(realm, roomId, eventId).findFirst()
         when {
             // The event doesn't exist locally, let's assume it hasn't been read
-            eventToCheck == null -> false
-            eventToCheck.root?.sender == userId -> true
+            eventToCheck == null -> false.also{    Timber.w("DEADBEEF: ID=24 false")       }
+            eventToCheck.root?.sender == userId -> true.also{Timber.w("DEADBEEF: ID=25 true")}
             // If new event exists and the latest event is from ourselves we can infer the event is read
-            latestEventIsFromSelf(realm, roomId, userId) -> true
-            eventToCheck.isBeforeLatestReadReceipt(realm, roomId, userId, null) -> true
-            (shouldCheckIfReadInEventsThread && eventToCheck.isBeforeLatestReadReceipt(realm, roomId, userId, eventToCheck.getThreadId())) -> true
-            else -> false
+            latestEventIsFromSelf(realm, roomId, userId) -> true.also{Timber.w("DEADBEEF: ID=26 true")}
+            eventToCheck.isBeforeLatestReadReceipt(realm, roomId, userId, null) ->true.also{Timber.w("DEADBEEF: ID=27 true")}
+            (shouldCheckIfReadInEventsThread.also{Timber.w("DEADBEEF: ID=30)")} && eventToCheck.isBeforeLatestReadReceipt(realm, roomId, userId, eventToCheck.getThreadId())
+            .also{Timber.w("DEADBEEF: ID=31")}) -> true.also{Timber.w("DEADBEEF: ID=28 true")}
+            else -> false.also{Timber.w("DEADBEEF: ID=29 false")}
         }
     }
 }
@@ -61,8 +69,8 @@ private fun latestEventIsFromSelf(realm: Realm, roomId: String, userId: String) 
 private fun TimelineEventEntity.isBeforeLatestReadReceipt(realm: Realm, roomId: String, userId: String, threadId: String?): Boolean {
     val isMoreRecent = ReadReceiptEntity.where(realm, roomId, userId, threadId).findFirst()?.let { readReceipt ->
         val readReceiptEvent = TimelineEventEntity.where(realm, roomId, readReceipt.eventId).findFirst()
-        readReceiptEvent?.isMoreRecentThan(this)
-    } ?: false
+        readReceiptEvent?.isMoreRecentThan(this).also{Timber.w("DEADBEEF: ID=40 ret=${it}")}
+    } ?: false.also{Timber.w("DEADBEEF: ID=41, false")}
     return isMoreRecent
 }
 

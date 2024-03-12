@@ -20,6 +20,7 @@ import io.realm.Realm
 import org.matrix.android.sdk.internal.database.model.TimelineEventEntity
 import org.matrix.android.sdk.internal.database.model.TimelineEventEntityFields
 import org.matrix.android.sdk.internal.database.query.where
+import timber.log.Timber
 
 internal fun TimelineEventEntity.Companion.nextId(realm: Realm): Long {
     val currentIdNum = TimelineEventEntity.where(realm).max(TimelineEventEntityFields.LOCAL_ID)
@@ -31,11 +32,14 @@ internal fun TimelineEventEntity.Companion.nextId(realm: Realm): Long {
 }
 
 internal fun TimelineEventEntity.isMoreRecentThan(eventToCheck: TimelineEventEntity): Boolean {
-    val currentChunk = this.chunk?.first(null) ?: return false
-    val chunkToCheck = eventToCheck.chunk?.first(null) ?: return false
-    return if (currentChunk == chunkToCheck) {
-        this.displayIndex >= eventToCheck.displayIndex
+    val currentChunk = this.chunk?.first(null) ?: return false.also{Timber.w("DEADBEEF: ID=50 ${it}")}
+    val chunkToCheck = eventToCheck.chunk?.first(null) ?: return false.also{Timber.w("DEADBEEF: ID=51 ${it}")}
+    return if ((currentChunk == chunkToCheck).also{Timber.w("DEADBEEF: ID=52 ${it}")}) {
+        val rez = this.displayIndex >= eventToCheck.displayIndex
+        Timber.w("DEADBEEF: ID=53 ${rez}, compare: ${this.eventId} with ${eventToCheck.eventId}")
+        return rez;
     } else {
-        currentChunk.isMoreRecentThan(chunkToCheck)
+        currentChunk.isMoreRecentThan(chunkToCheck).also{Timber.w("DEADBEEF: ID=54 ${it}")}
+                
     }
 }

@@ -41,6 +41,7 @@ class OutdatedEventDetector @Inject constructor(
             Timber.d("DEADBEEF: ID=12, room is found, did NOT return false")
             val ret = room.readService().isEventRead(eventID)
             Timber.d("DEADBEEF: ID=13, event is Read? ${ret}")
+            return ret
         }
         Timber.d("DEADBEEF: ID=14 ${notifiableEvent} is not a message, returning false")
         return false

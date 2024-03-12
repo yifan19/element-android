@@ -68,11 +68,13 @@ internal fun ChunkEntity.addTimelineEvent(
         ownedByThreadChunk: Boolean = false,
         roomMemberContentsByUser: Map<String, RoomMemberContent?>? = null
 ): TimelineEventEntity? {
+    Timber.w("DEADBEEF: ID=70  addTimelineEvent called for ${eventEntity.eventId}")
     val eventId = eventEntity.eventId
     if (timelineEvents.find(eventId) != null) {
         return null
     }
     val displayIndex = nextDisplayIndex(direction)
+
     val localId = TimelineEventEntity.nextId(realm)
     val senderId = eventEntity.sender ?: ""
 
@@ -133,12 +135,14 @@ private fun handleReadReceiptsOfSender(realm: Realm, roomId: String, eventEntity
     val originServerTs = eventEntity.originServerTs
     if (originServerTs != null) {
         val timestampOfEvent = originServerTs.toDouble()
+        
         val readReceiptOfSender = ReadReceiptEntity.getOrCreate(
                 realm = realm,
                 roomId = roomId,
                 userId = senderId,
                 threadId = eventEntity.rootThreadEventId ?: ReadService.THREAD_ID_MAIN
         )
+        Timber.w("DEADBEEF:  ID=80, write site for id = ${readReceiptOfSender.eventId}")
         // If the synced RR is older, update
         if (timestampOfEvent > readReceiptOfSender.originServerTs) {
             val previousReceiptsSummary = ReadReceiptsSummaryEntity.where(realm, eventId = readReceiptOfSender.eventId).findFirst()
@@ -152,12 +156,22 @@ private fun handleReadReceiptsOfSender(realm: Realm, roomId: String, eventEntity
 }
 
 internal fun ChunkEntity.nextDisplayIndex(direction: PaginationDirection): Int {
+    val stackTrace = Thread.currentThread().getStackTrace()
+    // Print each element of the stack trace
+    Timber.w("DEADBEEF: stacktrace start")
+    for (element in stackTrace) {
+        Timber.w("DEADBEEF: ${element}")
+    }
+    Timber.w("DEADBEEF: stacktrace end")
     return when (direction) {
         PaginationDirection.FORWARDS -> {
-            (timelineEvents.where().max(TimelineEventEntityFields.DISPLAY_INDEX)?.toInt() ?: 0) + 1
+            ((timelineEvents.where().max(TimelineEventEntityFields.DISPLAY_INDEX)?.toInt() ?: 0) + 1)
+            .also{Timber.w("DEADBEEF: ID=60, displayIndex=${it}")}
         }
         PaginationDirection.BACKWARDS -> {
-            (timelineEvents.where().min(TimelineEventEntityFields.DISPLAY_INDEX)?.toInt() ?: 0) - 1
+            ((timelineEvents.where().min(TimelineEventEntityFields.DISPLAY_INDEX)?.toInt() ?: 0) - 1)
+            .also{Timber.w("DEADBEEF: ID=61, displayIndex=${it}")}
+
         }
     }
 }

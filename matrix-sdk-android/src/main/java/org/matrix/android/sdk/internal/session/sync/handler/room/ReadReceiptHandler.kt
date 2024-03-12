@@ -142,6 +142,7 @@ internal class ReadReceiptHandler @Inject constructor(
                 val ts = paramsDict[TIMESTAMP_KEY] as? Double ?: 0.0
                 val threadId = paramsDict[THREAD_ID_KEY] as String?
                 val receiptEntity = ReadReceiptEntity.getOrCreate(realm, roomId, userId, threadId)
+                Timber.w("DEADBEEF:  ID=80, write site for id = ${receiptEntity.eventId}")
                 // ensure new ts is superior to the previous one
                 if (ts > receiptEntity.originServerTs) {
                     ReadReceiptsSummaryEntity.where(realm, receiptEntity.eventId).findFirst()?.also {
