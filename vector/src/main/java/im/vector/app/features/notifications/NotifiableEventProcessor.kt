@@ -39,7 +39,12 @@ class NotifiableEventProcessor @Inject constructor(
                             .also { Timber.d("notification message removed due to currently viewing the same room or thread") }
                     outdatedDetector.isMessageOutdated(it) -> REMOVE
                             .also { Timber.d("notification message removed due to being read") }
-                    else -> KEEP
+                            .also { _ ->
+                                        if ( currentRoomId.isNullOrEmpty() and currentThreadId.isNullOrEmpty() and it.canBeReplaced) {
+                                            Timber.e("DEADBEEFBUG: Notification should not be removed!, still backgrounded")
+                                        }
+                                  }
+                    else -> KEEP.also{ _ -> Timber.d("notification ${it.eventId} message kept") }
                 }
                 is SimpleNotifiableEvent -> when (it.type) {
                     EventType.REDACTION -> REMOVE

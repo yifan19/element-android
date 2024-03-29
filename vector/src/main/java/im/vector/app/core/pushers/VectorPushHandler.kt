@@ -129,6 +129,9 @@ class VectorPushHandler @Inject constructor(
                     // Try to get the Event content faster
                     Timber.tag(loggerTag.value).d("Requesting event in fast lane")
                     getEventFastLane(session, pushData)
+                    Timber.tag(loggerTag.value).d("Sleeping, to hopefully cause some timing issue")
+                    Thread.sleep(2000);
+                    Timber.tag(loggerTag.value).d("Woken up from my sleep!")
 
                     Timber.tag(loggerTag.value).d("Requesting background sync")
                     session.syncService().requireBackgroundSync()
