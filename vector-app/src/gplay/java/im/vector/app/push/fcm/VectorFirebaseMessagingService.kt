@@ -54,7 +54,7 @@ class VectorFirebaseMessagingService : FirebaseMessagingService() {
         super.onDestroy()
     }
     override fun onNewToken(token: String) {
-        Timber.tag(loggerTag.value).d("New Firebase token")
+        Timber.tag(loggerTag.value).d("New Firebase token: ${token}")
         fcmHelper.storeFcmToken(token)
         if (
                 vectorPreferences.areNotificationEnabledForDevice() &&

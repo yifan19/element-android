@@ -72,6 +72,8 @@ internal fun ChunkEntity.addTimelineEvent(
     if (timelineEvents.find(eventId) != null) {
         return null
     }
+    Timber.e("DEADBEEF: event storing: eventEntity=${eventEntity.eventId}")
+
     val displayIndex = nextDisplayIndex(direction)
     val localId = TimelineEventEntity.nextId(realm)
     val senderId = eventEntity.sender ?: ""

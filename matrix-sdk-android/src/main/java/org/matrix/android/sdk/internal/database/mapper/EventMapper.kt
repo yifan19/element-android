@@ -35,7 +35,15 @@ import kotlin.random.Random
 internal object EventMapper {
 
     fun map(event: Event, roomId: String): EventEntity {
+        val stackTrace = Thread.currentThread().stackTrace
+        Timber.w("DEADBEEF: stacktrace start==>")
+        for (element in stackTrace) {
+            Timber.w("DEADBEEF: ${element}")
+        }
+        Timber.w("DEADBEEF: <==stacktrace end")        
+        
         val eventEntity = EventEntity()
+        // Timber.e("DEADBEEF: event init: eventEntity=${System.identityHashCode(eventEntity)}")
         // TODO change this as we shouldn't use event everywhere
         eventEntity.eventId = event.eventId ?: "$$roomId-${Random.nextLong()}-${event.hashCode()}"
         eventEntity.roomId = event.roomId ?: roomId
@@ -44,7 +52,9 @@ internal object EventMapper {
         eventEntity.isUseless = IsUselessResolver.isUseless(event)
         eventEntity.stateKey = event.stateKey
         eventEntity.type = event.type ?: EventType.MISSING_TYPE
-        eventEntity.sender = event.senderId
+        // eventEntity.sender = event.senderId.also{Timber.e("DEADBEEF: event write: eventEntity=${System.identityHashCode(eventEntity)}, senderId=${it}")}
+        eventEntity.sender = event.senderId.also{Timber.e("DEADBEEF: event write: ${eventEntity.eventId}, senderId=${it}")}
+
         eventEntity.originServerTs = event.originServerTs
         eventEntity.redacts = event.redacts
         eventEntity.age = event.unsignedData?.age ?: event.originServerTs

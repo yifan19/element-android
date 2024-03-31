@@ -25,7 +25,8 @@ import org.matrix.android.sdk.internal.database.model.ReadMarkerEntity
 import org.matrix.android.sdk.internal.database.model.ReadReceiptEntity
 import org.matrix.android.sdk.internal.database.model.TimelineEventEntity
 import org.matrix.android.sdk.internal.database.model.getThreadId
-
+import timber.log.Timber
+ 
 internal fun isEventRead(
         realmConfiguration: RealmConfiguration,
         userId: String?,
@@ -36,11 +37,14 @@ internal fun isEventRead(
     if (shouldCheckIfReadInEventsThread) {
         //DO NOTHING!
     }
-    if (userId.isNullOrBlank() || roomId.isNullOrBlank() || eventId.isNullOrBlank()) {
-        return false
+
+    if (userId.isNullOrBlank()
+       || roomId.isNullOrBlank()
+       || eventId.isNullOrBlank()) {
+        return false.also{Timber.e("DEADBEEF: ID = 23, return false")}
     }
-    if (LocalEcho.isLocalEchoId(eventId)) {
-        return true
+    if (LocalEcho.isLocalEchoId(eventId).also{Timber.e("DEADBEEF: ID = 24, isLocalEchoId=${it}")}) {
+        return true.also{Timber.e("DEADBEEF: ID = 25, return true")}
     }
     // If we don't know if the event has been read, we assume it's not
     var isEventRead = false
@@ -48,21 +52,27 @@ internal fun isEventRead(
     Realm.getInstance(realmConfiguration).use { realm ->
         val latestEvent = TimelineEventEntity.latestEvent(realm, roomId, true)
         // If latest event is from you we are sure the event is read
-        if (latestEvent?.root?.sender == userId) {
-            return true
+        Timber.e("DEADBEEF: event read: eventEntity=${latestEvent?.root?.eventId}, senderId=${latestEvent?.root?.sender}")
+        Timber.e("DEADBEEF: userid read: userId=${userId}")
+        if ((latestEvent?.root?.sender == userId).also{Timber.e("DEADBEEF: ID = 26, rsender == userId ${it}")}) {
+            
+            return true.also{Timber.e("DEADBEEF: ID = 27, return true")}
         }
         val eventToCheck = TimelineEventEntity.where(realm, roomId, eventId).findFirst()
-        isEventRead = when {
-            eventToCheck == null                -> false
-            eventToCheck.root?.sender == userId -> true
+        isEventRead = when { 
+            (eventToCheck == null)
+                // .also{Timber.e("DEADBEEF: ID = 28, eventToCheck==null ${it}")}
+                           -> false.also{Timber.e("DEADBEEF: ID = 29, return false")}
+            (eventToCheck.root?.sender == userId).also{Timber.e("DEADBEEF: ID = 30, sender==userId ${it}")}
+                           -> true.also{Timber.e("DEADBEEF: ID = 31, return true")}
             else                                -> {
-                val readReceipt = ReadReceiptEntity.where(realm, roomId, userId, null).findFirst() ?: return@use
-                val readReceiptEvent = TimelineEventEntity.where(realm, roomId, readReceipt.eventId).findFirst() ?: return@use
-                readReceiptEvent.isMoreRecentThan(eventToCheck)
+                val readReceipt = ReadReceiptEntity.where(realm, roomId, userId, null).findFirst().also{Timber.e("DEADBEEF: ID = 32, findFirst ${it}")}?: return@use
+                val readReceiptEvent = TimelineEventEntity.where(realm, roomId, readReceipt.eventId).findFirst().also{Timber.e("DEADBEEF: ID = 33, findFirst ${it}")} ?: return@use
+                readReceiptEvent.isMoreRecentThan(eventToCheck).also{Timber.e("DEADBEEF: ID = 34, sMoreRecentThan")}
             }
         }
     }
-    return isEventRead
+    return isEventRead.also{Timber.e("DEADBEEF: ID = 35, return ${it}")}
 }
 
 /**

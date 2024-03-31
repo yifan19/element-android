@@ -31,20 +31,29 @@ class NotifiableEventProcessor @Inject constructor(
 ) {
 
     fun process(queuedEvents: List<NotifiableEvent>, currentRoomId: String?, currentThreadId: String?, renderedEvents: ProcessedEvents): ProcessedEvents {
+        val stackTrace = Thread.currentThread().stackTrace
+        Timber.w("DEADBEEF: stacktrace start==>")
+        for (element in stackTrace) {
+            Timber.w("DEADBEEF: ${element}")
+        }
+        Timber.w("DEADBEEF: <==stacktrace end")        
+        
         val processedEvents = queuedEvents.map {
             val type = when (it) {
                 is InviteNotifiableEvent -> if (autoAcceptInvites.hideInvites) REMOVE else KEEP
                 is NotifiableMessageEvent -> when {
                     it.shouldIgnoreMessageEventInRoom(currentRoomId, currentThreadId) -> REMOVE
                             .also { Timber.d("notification message removed due to currently viewing the same room or thread") }
-                    outdatedDetector.isMessageOutdated(it) -> REMOVE
+                    outdatedDetector.isMessageOutdated(it).also{Timber.e("DEADBEEF: ID = 04, isMessageOutdated = ${it}")} -> REMOVE
                             .also { Timber.d("notification message removed due to being read") }
                             .also { _ ->
-                                        if ( currentRoomId.isNullOrEmpty() and currentThreadId.isNullOrEmpty() and it.canBeReplaced) {
-                                            Timber.e("DEADBEEFBUG: Notification should not be removed!, still backgrounded")
+                                        if ( currentRoomId.isNullOrEmpty().also{Timber.e("DEADBEEF: ID = 03, currentRoomId = ${it}")}
+                                              and currentThreadId.isNullOrEmpty().also{Timber.e("DEADBEEF: ID = 02, currentThreadId ${it}")}
+                                              and it.canBeReplaced.also{Timber.e("DEADBEEF: ID = 01, canBeReplaced ${it} ")} ) {
+                                            Timber.e("DEADBEEFBUG: ID = 00 Notification should not be removed!, still backgrounded")
                                         }
                                   }
-                    else -> KEEP.also{ _ -> Timber.d("notification ${it.eventId} message kept") }
+                    else -> KEEP.also{ _ -> Timber.d("DEABBEEF: FYI: notification ${it.eventId} message kept") }
                 }
                 is SimpleNotifiableEvent -> when (it.type) {
                     EventType.REDACTION -> REMOVE
