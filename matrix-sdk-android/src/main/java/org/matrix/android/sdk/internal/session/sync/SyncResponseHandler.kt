@@ -48,6 +48,7 @@ import org.matrix.android.sdk.internal.util.time.Clock
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.system.measureTimeMillis
+import kotlin.system.measureNanoTime
 
 internal class SyncResponseHandler @Inject constructor(
         @SessionDatabase private val monarchy: Monarchy,
@@ -164,14 +165,14 @@ internal class SyncResponseHandler @Inject constructor(
 
     private suspend fun List<SpannableMetricPlugin>.startCryptoService(isInitialSync: Boolean) {
         measureSpan("task", "start_crypto_service") {
-            measureTimeMillis {
+            measureNanoTime {
                 if (!cryptoService.isStarted()) {
                     Timber.v("Should start cryptoService")
                     cryptoService.start()
                 }
                 cryptoService.onSyncWillProcess(isInitialSync)
             }.also {
-                Timber.v("Finish handling start cryptoService in $it ms")
+                Timber.v("Finish handling start cryptoService in $it ns")
             }
         }
     }
@@ -201,13 +202,15 @@ internal class SyncResponseHandler @Inject constructor(
     ) {
         // Start one big transaction
         measureSpan("task", "monarchy_transaction") {
-            monarchy.awaitTransaction { realm ->
-                // IMPORTANT nothing should be suspend here as we are accessing the realm instance (thread local)
-                handleRooms(reporter, syncResponse, realm, isInitialSync, aggregator)
-                handleAccountData(reporter, realm, syncResponse)
-                handlePresence(realm, syncResponse)
+            measureNanoTime {
+                monarchy.awaitTransaction { realm ->
+                    // IMPORTANT nothing should be suspend here as we are accessing the realm instance (thread local)
+                    handleRooms(reporter, syncResponse, realm, isInitialSync, aggregator)
+                    handleAccountData(reporter, realm, syncResponse)
+                    handlePresence(realm, syncResponse)
 
-                tokenStore.saveToken(realm, syncResponse.nextBatch)
+                    tokenStore.saveToken(realm, syncResponse.nextBatch)
+                }
             }
         }
     }
@@ -220,7 +223,7 @@ internal class SyncResponseHandler @Inject constructor(
             aggregator: SyncResponsePostTreatmentAggregator
     ) {
         measureSpan("task", "handle_rooms") {
-            measureTimeMillis {
+            measureNanoTime {
                 Timber.v("Handle rooms")
                 reportSubtask(reporter, InitialSyncStep.ImportingAccountRoom, 1, 0.8f) {
                     if (syncResponse.rooms != null) {
