@@ -28,6 +28,12 @@ import org.matrix.android.sdk.api.session.sync.FilterService
 import timber.log.Timber
 
 fun Session.configureAndStart(context: Context, startSyncing: Boolean = true) {
+val stackTrace = Thread.currentThread().stackTrace
+    Timber.w("DEADBEEF: stacktrace start==>")
+        for (element in stackTrace) {
+             Timber.w("DEADBEEF: ${element}")
+        }
+    Timber.w("DEADBEEF: <==stacktrace end")
     Timber.i("Configure and start session for $myUserId. startSyncing: $startSyncing")
     open()
     filterService().setFilter(FilterService.FilterPreset.ElementFilter)

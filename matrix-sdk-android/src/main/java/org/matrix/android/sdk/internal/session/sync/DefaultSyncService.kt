@@ -50,12 +50,20 @@ internal class DefaultSyncService @Inject constructor(
 
     override fun startSync(fromForeground: Boolean) {
         Timber.i("Starting sync thread")
+        val stackTrace = Thread.currentThread().stackTrace
+        Timber.w("DEADBEEF: stacktrace start==>")
+            for (element in stackTrace) {
+                Timber.w("DEADBEEF: ${element}")
+            }
+        Timber.w("DEADBEEF: <==stacktrace end")
         assert(sessionState.isOpen)
         val localSyncThread = getSyncThread()
         localSyncThread.setInitialForeground(fromForeground)
         if (!localSyncThread.isAlive) {
+            Timber.w("DEADBEEF: sync starting for thread ${localSyncThread}")
             localSyncThread.start()
         } else {
+            Timber.w("DEADBEEF: sync REstarting for thread ${localSyncThread}")
             localSyncThread.restart()
             Timber.w("Attempt to start an already started thread")
         }
@@ -63,6 +71,7 @@ internal class DefaultSyncService @Inject constructor(
 
     override fun stopSync() {
         assert(sessionState.isOpen)
+        Timber.w("DEADBEEF: sync has been stopped for thread ${syncThread}")
         syncThread?.kill()
         syncThread = null
     }
@@ -81,7 +90,7 @@ internal class DefaultSyncService @Inject constructor(
         return syncTokenStore.getLastToken() != null
     }
 
-    private fun getSyncThread(): SyncThread {
+    public fun getSyncThread(): SyncThread {
         return syncThread ?: syncThreadProvider.get().also {
             syncThread = it
         }
