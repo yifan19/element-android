@@ -283,6 +283,7 @@ class OnboardingViewModel @AssistedInject constructor(
                         onFailure = {
                             if (it !is CancellationException) {
                                 _viewEvents.post(OnboardingViewEvents.Failure(it))
+                                Timber.e("DEADBEEF: registration failure detected")
                             }
                         }
                 )
