@@ -197,12 +197,17 @@ internal class DefaultSyncTask @Inject constructor(
     private suspend fun downloadInitSyncResponse(requestParams: Map<String, String>, syncStatisticsData: SyncStatisticsData): File {
         val workingFile = File(workingDir, "initSync.json")
         val status = initialSyncStatusRepository.getStep()
+        Timber.w("DEADBEEF: ID=2: workingFile.exists() prepare")
+
         if (workingFile.exists() && status >= InitialSyncStatus.STEP_DOWNLOADED) {
+            Timber.w("DEADBEEF: ID=2: workingFile.exists() taken")
             Timber.tag(loggerTag.value).d("INIT_SYNC file is already here")
             reportSubtask(syncRequestStateTracker, InitialSyncStep.Downloading, 1, 0.3f) {
                 // Empty task
             }
         } else {
+            Timber.w("DEADBEEF: ID=2: workingFile.exists() not taken")
+
             initialSyncStatusRepository.setStep(InitialSyncStatus.STEP_DOWNLOADING)
             val syncResponse = logDuration("INIT_SYNC Perform server request", loggerTag, clock) {
                 reportSubtask(syncRequestStateTracker, InitialSyncStep.ServerComputing, 1, 0.2f) {
@@ -210,7 +215,9 @@ internal class DefaultSyncTask @Inject constructor(
                 }
             }
             syncStatisticsData.requestInitSyncTime = SystemClock.elapsedRealtime()
+            Timber.w("DEADBEEF: ID=1: syncResponse.isSuccessful prepare")
             if (syncResponse.isSuccessful) {
+                Timber.w("DEADBEEF: ID=1: syncResponse.isSuccessful taken")    
                 logDuration("INIT_SYNC Download and save to file", loggerTag, clock) {
                     reportSubtask(syncRequestStateTracker, InitialSyncStep.Downloading, 1, 0.1f) {
                         syncResponse.body()?.byteStream()?.use { inputStream ->
@@ -221,6 +228,7 @@ internal class DefaultSyncTask @Inject constructor(
                     }
                 }
             } else {
+                Timber.w("DEADBEEF: ID=1: syncResponse.isSuccessful = not taken")    
                 throw syncResponse.toFailure(globalErrorReceiver)
                         .also { Timber.tag(loggerTag.value).w("INIT_SYNC request failure: $this") }
             }
