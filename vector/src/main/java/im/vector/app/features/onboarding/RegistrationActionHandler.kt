@@ -20,20 +20,23 @@ import org.matrix.android.sdk.api.auth.registration.RegisterThreePid
 import org.matrix.android.sdk.api.auth.registration.RegistrationResult
 import org.matrix.android.sdk.api.auth.registration.RegistrationWizard
 import javax.inject.Inject
+import timber.log.Timber
 
 class RegistrationActionHandler @Inject constructor() {
 
     suspend fun handleRegisterAction(registrationWizard: RegistrationWizard, action: RegisterAction): RegistrationResult {
+        Timber.e("DEADBEEF: handleRegisterAction called with $action")
         return when (action) {
-            RegisterAction.StartRegistration               -> registrationWizard.getRegistrationFlow()
-            is RegisterAction.CaptchaDone                  -> registrationWizard.performReCaptcha(action.captchaResponse)
-            is RegisterAction.AcceptTerms                  -> registrationWizard.acceptTerms()
-            is RegisterAction.RegisterDummy                -> registrationWizard.dummy()
-            is RegisterAction.AddThreePid                  -> registrationWizard.addThreePid(action.threePid)
-            is RegisterAction.SendAgainThreePid            -> registrationWizard.sendAgainThreePid()
-            is RegisterAction.ValidateThreePid             -> registrationWizard.handleValidateThreePid(action.code)
-            is RegisterAction.CheckIfEmailHasBeenValidated -> registrationWizard.checkIfEmailHasBeenValidated(action.delayMillis)
-            is RegisterAction.CreateAccount                -> registrationWizard.createAccount(action.username, action.password, action.initialDeviceName)
+            RegisterAction.StartRegistration
+                -> registrationWizard.getRegistrationFlow().also{Timber.e("DEADBEEF: getRegistrationFlow")}
+            is RegisterAction.CaptchaDone                  -> registrationWizard.performReCaptcha(action.captchaResponse).also{Timber.e("DEADBEEF: performReCaptcha")}
+            is RegisterAction.AcceptTerms                  -> registrationWizard.acceptTerms().also{Timber.e("DEADBEEF: acceptTerms")}
+            is RegisterAction.RegisterDummy                -> registrationWizard.dummy().also{Timber.e("DEADBEEF: dummy")}
+            is RegisterAction.AddThreePid                  -> registrationWizard.addThreePid(action.threePid).also{Timber.e("DEADBEEF: addThreePid")}
+            is RegisterAction.SendAgainThreePid            -> registrationWizard.sendAgainThreePid().also{Timber.e("DEADBEEF: sendAgainThreePid")}
+            is RegisterAction.ValidateThreePid             -> registrationWizard.handleValidateThreePid(action.code).also{Timber.e("DEADBEEF: threePid")}
+            is RegisterAction.CheckIfEmailHasBeenValidated -> registrationWizard.checkIfEmailHasBeenValidated(action.delayMillis).also{Timber.e("DEADBEEF: emailValidate")}
+            is RegisterAction.CreateAccount                -> {Timber.e("DEADBEEF: createAccount"); registrationWizard.createAccount(action.username, action.password, action.initialDeviceName)}
         }
     }
 }

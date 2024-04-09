@@ -267,9 +267,17 @@ class OnboardingViewModel @AssistedInject constructor(
     }
 
     private suspend fun internalRegisterAction(action: RegisterAction, onNextRegistrationStepAction: (FlowResult) -> Unit) {
+        val stackTrace = Thread.currentThread().stackTrace
+        Timber.w("DEADBEEF: stacktrace start==>")
+        for (element in stackTrace) {
+            Timber.w("DEADBEEF: ${element}")
+        }
+        Timber.w("DEADBEEF: <==stacktrace end")      
         runCatching { registrationActionHandler.handleRegisterAction(registrationWizard, action) }
                 .fold(
                         onSuccess = {
+                            Timber.e("DEADBEEF: onSuccess = true")
+
                             when {
                                 action.ignoresResult() -> {
                                     // do nothing
@@ -281,6 +289,7 @@ class OnboardingViewModel @AssistedInject constructor(
                             }
                         },
                         onFailure = {
+                            Timber.e("DEADBEEF: onFailure = true")
                             if (it !is CancellationException) {
                                 _viewEvents.post(OnboardingViewEvents.Failure(it))
                                 Timber.e("DEADBEEF: registration failure detected")

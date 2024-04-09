@@ -29,6 +29,7 @@ import org.matrix.android.sdk.internal.auth.AuthAPI
 import org.matrix.android.sdk.internal.auth.PendingSessionStore
 import org.matrix.android.sdk.internal.auth.SessionCreator
 import org.matrix.android.sdk.internal.auth.db.PendingSessionData
+import timber.log.Timber
 
 /**
  * This class execute the registration request and is responsible to keep the session of interactive authentication
@@ -193,11 +194,16 @@ internal class DefaultRegistrationWizard(
         val credentials = try {
             registerTask.execute(RegisterTask.Params(registrationParams))
         } catch (exception: Throwable) {
+            Timber.e("Exception thrown caught")
             if (exception is RegistrationFlowError) {
+                Timber.e("DEADBEEF: exception is Registration Flow Error")
                 pendingSessionData = pendingSessionData.copy(currentSession = exception.registrationFlowResponse.session)
                         .also { pendingSessionStore.savePendingSessionData(it) }
                 return RegistrationResult.FlowResponse(exception.registrationFlowResponse.toFlowResult())
             } else {
+                Timber.w("DEADBEEF: stacktrace start==>")
+                Timbe.e(exception) 
+                Timber.w("DEADBEEF: <==stacktrace end")
                 throw exception
             }
         }
