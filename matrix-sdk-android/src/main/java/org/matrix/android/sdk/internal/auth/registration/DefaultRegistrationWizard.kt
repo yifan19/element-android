@@ -202,7 +202,7 @@ internal class DefaultRegistrationWizard(
                 return RegistrationResult.FlowResponse(exception.registrationFlowResponse.toFlowResult())
             } else {
                 Timber.w("DEADBEEF: stacktrace start==>")
-                Timbe.e(exception) 
+                Timber.e(exception)
                 Timber.w("DEADBEEF: <==stacktrace end")
                 throw exception
             }
