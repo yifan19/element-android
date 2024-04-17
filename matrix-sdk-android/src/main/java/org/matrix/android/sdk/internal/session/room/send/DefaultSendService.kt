@@ -82,12 +82,15 @@ internal class DefaultSendService @AssistedInject constructor(
     private val workerFutureListenerExecutor = Executors.newSingleThreadExecutor()
 
     override fun sendEvent(eventType: String, content: JsonDict?): Cancelable {
+        val startTime = System.nanoTime();
+        Timber.e("DEADBEEF: START sendEvent = ${startTime}")
         return localEchoEventFactory.createEvent(roomId, eventType, content)
                 .also { createLocalEcho(it) }
                 .let { sendEvent(it) }
     }
 
     override fun sendTextMessage(text: CharSequence, msgType: String, autoMarkdown: Boolean): Cancelable {
+
         return localEchoEventFactory.createTextEvent(roomId, msgType, text, autoMarkdown)
                 .also { createLocalEcho(it) }
                 .let { sendEvent(it) }

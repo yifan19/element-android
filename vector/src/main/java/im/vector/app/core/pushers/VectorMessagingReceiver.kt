@@ -86,7 +86,7 @@ class VectorMessagingReceiver : MessagingReceiver() {
      * @param instance connection, for multi-account
      */
     override fun onMessage(context: Context, message: ByteArray, instance: String) {
-        Timber.tag(loggerTag.value).d("## onMessage() received")
+        Timber.tag(loggerTag.value).d("DEADBEEF ## handling pushData ${System.nanoTime()}")
 
         val sMessage = String(message)
         if (buildMeta.lowPrivacyLoggingEnabled) {

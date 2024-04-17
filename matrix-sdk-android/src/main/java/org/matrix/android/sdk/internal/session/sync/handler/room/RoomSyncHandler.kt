@@ -511,6 +511,8 @@ internal class RoomSyncHandler @Inject constructor(
 
         // posting new events to timeline if any is registered
         timelineInput.onNewTimelineEvents(roomId = roomId, eventIds = eventIds)
+        val startTime = System.nanoTime()
+        Timber.e("DEADBEEF: END RoomSyncHandler = ${startTime}")
         return chunkEntity
     }
 
