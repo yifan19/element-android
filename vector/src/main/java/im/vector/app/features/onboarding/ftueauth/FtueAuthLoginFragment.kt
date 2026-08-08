@@ -33,6 +33,7 @@ import im.vector.app.core.extensions.hidePassword
 import im.vector.app.core.extensions.toReducedUrl
 import im.vector.app.databinding.FragmentLoginBinding
 import im.vector.app.features.login.LoginMode
+import timber.log.Timber
 import im.vector.app.features.login.SSORedirectRouterActivity
 import im.vector.app.features.login.ServerType
 import im.vector.app.features.login.SignMode
@@ -274,6 +275,7 @@ class FtueAuthLoginFragment @Inject constructor() : AbstractSSOFtueAuthFragment<
                 views.passwordFieldTil.error = errorFormatter.toHumanReadable(throwable)
             }
             throwable.isRegistrationDisabled()                           -> {
+                Timber.w("DEADBEEF-5874: isSignupMode=$isSignupMode throwable=$throwable")
                 MaterialAlertDialogBuilder(requireActivity())
                         .setTitle(R.string.dialog_title_error)
                         .setMessage(getString(R.string.login_registration_disabled))
