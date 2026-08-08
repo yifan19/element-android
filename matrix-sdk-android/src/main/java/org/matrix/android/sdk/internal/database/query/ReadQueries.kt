@@ -25,6 +25,7 @@ import org.matrix.android.sdk.internal.database.model.ReadMarkerEntity
 import org.matrix.android.sdk.internal.database.model.ReadReceiptEntity
 import org.matrix.android.sdk.internal.database.model.TimelineEventEntity
 import org.matrix.android.sdk.internal.database.model.getThreadId
+import timber.log.Timber
 
 internal fun isEventRead(
         realmConfiguration: RealmConfiguration,
@@ -49,6 +50,7 @@ internal fun isEventRead(
         val latestEvent = TimelineEventEntity.latestEvent(realm, roomId, true)
         // If latest event is from you we are sure the event is read
         if (latestEvent?.root?.sender == userId) {
+            Timber.w("DEADBEEF-5038: eventId=$eventId roomId=$roomId userId=$userId latestEvent=${latestEvent.eventId}")
             return true
         }
         val eventToCheck = TimelineEventEntity.where(realm, roomId, eventId).findFirst()
