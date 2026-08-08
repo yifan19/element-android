@@ -639,11 +639,11 @@ internal class RoomSyncHandler @Inject constructor(
                 Timber.w("DEADBEEF: local echo not removed (stuck): ${it.eventId} sendState=${it.root?.sendState}")
             }
         }
-        roomEntity.sendingTimelineEvents.filter { timelineEvent ->
-            timelineEvent.root?.sendState == SendState.SENT
-        }.forEach {
-            roomEntity.sendingTimelineEvents.remove(it)
-            it.deleteOnCascade(true)
-        }
+        // roomEntity.sendingTimelineEvents.filter { timelineEvent ->
+        //     timelineEvent.root?.sendState == SendState.SENT
+        // }.forEach {
+        //     roomEntity.sendingTimelineEvents.remove(it)
+        //     it.deleteOnCascade(true)
+        // }
     }
 }
