@@ -67,6 +67,7 @@ internal object FilterFactory {
     }
 
     private fun createElementTimelineFilter(): RoomEventFilter? {
+        Timber.w("DEADBEEF-7516: enableUnreadThreadNotifications=true")
         return RoomEventFilter(enableUnreadThreadNotifications = true)
     }
 
