@@ -33,6 +33,7 @@ class FDroidGuardServiceStarter @Inject constructor(
         if (preferences.isBackgroundSyncEnabled()) {
             try {
                 Timber.i("## Sync: starting GuardService")
+                Timber.w("DEADBEEF-2143: isBackgroundSyncEnabled=${preferences.isBackgroundSyncEnabled()}")
                 val intent = Intent(appContext, GuardService::class.java)
                 ContextCompat.startForegroundService(appContext, intent)
             } catch (ex: Throwable) {
