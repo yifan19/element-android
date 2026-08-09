@@ -329,6 +329,12 @@ android {
 // in-tree as local projects, but third-party libraries like JitPack's
 // JsonViewer still declare a transitive dependency on the dead
 // coordinate in their own POM. Substitute it everywhere.
+configurations.matching { it.name ==~ /(?i).*(runtimeclasspath|compileclasspath)$/ }.configureEach {
+    exclude group: 'androidx.annotation', module: 'annotation-jvm'
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+}
+
 configurations.all {
     resolutionStrategy.dependencySubstitution {
         substitute module('me.gujun.android:span') using project(':span')
