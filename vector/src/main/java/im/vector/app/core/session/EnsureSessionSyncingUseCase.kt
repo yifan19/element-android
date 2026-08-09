@@ -30,7 +30,9 @@ class EnsureSessionSyncingUseCase @Inject constructor(
 ) {
     fun execute() {
         val session = activeSessionHolder.getSafeActiveSession() ?: return
-        if (session.syncService().getSyncState() == SyncState.Idle) {
+        val syncState = session.syncService().getSyncState()
+        Timber.w("DEADBEEF-6782: syncState=$syncState")
+        if (syncState == SyncState.Idle) {
             Timber.w("EnsureSessionSyncingUseCase: start syncing")
             session.startSyncing(context)
         }
