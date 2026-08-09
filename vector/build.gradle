@@ -325,6 +325,20 @@ android {
     }
 }
 
+// Some JCenter-only artifacts (e.g. me.gujun.android:span) are vendored
+// in-tree as local projects, but third-party libraries like JitPack's
+// JsonViewer still declare a transitive dependency on the dead
+// coordinate in their own POM. Substitute it everywhere.
+configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        substitute module('me.gujun.android:span') using project(':span')
+        substitute module('com.amulyakhare:com.amulyakhare.textdrawable') using project(':textdrawable')
+        substitute module('com.otaliastudios:autocomplete') using project(':autocomplete')
+        substitute module('me.dm7.barcodescanner:zxing') using project(':barcodescanner-zxing')
+        substitute module('dk.ilios:realmfieldnameshelper') using project(':realmfieldnameshelper')
+    }
+}
+
 dependencies {
 
     implementation project(":matrix-sdk-android")
