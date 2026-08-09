@@ -37,7 +37,6 @@ import im.vector.app.core.preference.VectorPreference
 import im.vector.app.core.preference.VectorPreferenceCategory
 import im.vector.app.core.preference.VectorSwitchPreference
 import im.vector.app.core.pushers.PushersManager
-import im.vector.app.core.services.GuardServiceStarter
 import im.vector.app.core.utils.isIgnoringBatteryOptimizations
 import im.vector.app.core.utils.requestDisablingBatteryOptimization
 import im.vector.app.features.notifications.NotificationUtils
@@ -62,8 +61,7 @@ import javax.inject.Inject
 class VectorSettingsNotificationPreferenceFragment @Inject constructor(
         private val pushManager: PushersManager,
         private val activeSessionHolder: ActiveSessionHolder,
-        private val vectorPreferences: VectorPreferences,
-        private val guardServiceStarter: GuardServiceStarter
+        private val vectorPreferences: VectorPreferences
 ) : VectorSettingsBaseFragment(),
         BackgroundSyncModeChooserDialog.InteractionListener {
 
@@ -218,18 +216,13 @@ class VectorSettingsNotificationPreferenceFragment @Inject constructor(
             it.isVisible = !FcmHelper.isPushSupported()
         }
 
-        val backgroundSyncEnabled = vectorPreferences.isBackgroundSyncEnabled()
         findPreference<VectorEditTextPreference>(VectorPreferences.SETTINGS_SET_SYNC_TIMEOUT_PREFERENCE_KEY)?.let {
-            it.isEnabled = backgroundSyncEnabled
+            it.isEnabled = vectorPreferences.isBackgroundSyncEnabled()
             it.summary = secondsToText(vectorPreferences.backgroundSyncTimeOut())
         }
         findPreference<VectorEditTextPreference>(VectorPreferences.SETTINGS_SET_SYNC_DELAY_PREFERENCE_KEY)?.let {
-            it.isEnabled = backgroundSyncEnabled
+            it.isEnabled = vectorPreferences.isBackgroundSyncEnabled()
             it.summary = secondsToText(vectorPreferences.backgroundSyncDelay())
-        }
-        when {
-            backgroundSyncEnabled -> guardServiceStarter.start()
-            else                  -> guardServiceStarter.stop()
         }
     }
 

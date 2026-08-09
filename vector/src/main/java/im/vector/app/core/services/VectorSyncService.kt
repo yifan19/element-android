@@ -83,7 +83,7 @@ class VectorSyncService : SyncService() {
         val notificationSubtitleRes = if (isInitialSync) {
             R.string.notification_initial_sync
         } else {
-            R.string.notification_listening_for_notifications
+            R.string.notification_listening_for_events
         }
         val notification = notificationUtils.buildForegroundServiceNotification(notificationSubtitleRes, false)
         startForeground(NotificationUtils.NOTIFICATION_ID_FOREGROUND_SERVICE, notification)

@@ -108,6 +108,6 @@ object FcmHelper {
 
     @Suppress("UNUSED_PARAMETER")
     fun onEnterBackground(context: Context, vectorPreferences: VectorPreferences, activeSessionHolder: ActiveSessionHolder) {
-        // No op
+        // TODO FCM fallback
     }
 }

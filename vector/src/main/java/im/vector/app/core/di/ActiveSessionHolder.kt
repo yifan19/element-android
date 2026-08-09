@@ -18,7 +18,6 @@ package im.vector.app.core.di
 
 import arrow.core.Option
 import im.vector.app.ActiveSessionDataSource
-import im.vector.app.core.services.GuardServiceStarter
 import im.vector.app.features.call.webrtc.WebRtcCallManager
 import im.vector.app.features.crypto.keysrequest.KeyRequestHandler
 import im.vector.app.features.crypto.verification.IncomingVerificationRequestHandler
@@ -37,8 +36,7 @@ class ActiveSessionHolder @Inject constructor(private val sessionObservableStore
                                               private val callManager: WebRtcCallManager,
                                               private val pushRuleTriggerListener: PushRuleTriggerListener,
                                               private val sessionListener: SessionListener,
-                                              private val imageManager: ImageManager,
-                                              private val guardServiceStarter: GuardServiceStarter
+                                              private val imageManager: ImageManager
 ) {
 
     private var activeSession: AtomicReference<Session?> = AtomicReference()
@@ -54,7 +52,6 @@ class ActiveSessionHolder @Inject constructor(private val sessionObservableStore
         pushRuleTriggerListener.startWithSession(session)
         session.callSignalingService().addCallListener(callManager)
         imageManager.onSessionStarted(session)
-        guardServiceStarter.start()
     }
 
     fun clearActiveSession() {
