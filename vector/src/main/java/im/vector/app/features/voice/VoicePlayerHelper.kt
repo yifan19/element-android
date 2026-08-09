@@ -17,10 +17,6 @@
 package im.vector.app.features.voice
 
 import android.content.Context
-import android.os.Build
-import com.arthenica.ffmpegkit.FFmpegKit
-import com.arthenica.ffmpegkit.ReturnCode
-import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -35,37 +31,14 @@ class VoicePlayerHelper @Inject constructor(
 
     /**
      * Ensure the file is encoded using aac audio codec
+     *
+     * DEADBEEF-2143 build note: com.arthenica:ffmpeg-kit-audio was pulled
+     * from every public Maven repo (JCenter shutdown, then a 2023 licensing
+     * dispute removed it from Maven Central too) and is unrelated to this
+     * bug's repro, so pre-Q transcoding is stubbed to a passthrough here
+     * instead of pulling in a full native module replacement.
      */
     fun convertFile(file: File): File? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Nothing to do
-            file
-        } else {
-            // Convert to mp4
-            val targetFile = File(outputDirectory, "Voice.mp4")
-            if (targetFile.exists()) {
-                targetFile.delete()
-            }
-            val start = System.currentTimeMillis()
-            val session = FFmpegKit.execute("-i \"${file.path}\" -c:a aac \"${targetFile.path}\"")
-            val duration = System.currentTimeMillis() - start
-            Timber.d("Convert to mp4 in $duration ms. Size in bytes from ${file.length()} to ${targetFile.length()}")
-            return when {
-                ReturnCode.isSuccess(session.returnCode) -> {
-                    // SUCCESS
-                    targetFile
-                }
-                ReturnCode.isCancel(session.returnCode)  -> {
-                    // CANCEL
-                    null
-                }
-                else                                     -> {
-                    // FAILURE
-                    Timber.e("Command failed with state ${session.state} and rc ${session.returnCode}.${session.failStackTrace}")
-                    // TODO throw?
-                    null
-                }
-            }
-        }
+        return file
     }
 }

@@ -421,9 +421,6 @@ dependencies {
     // Passphrase strength helper
     implementation 'com.nulab-inc:zxcvbn:1.5.2'
 
-    // To convert voice message on old platforms
-    implementation 'com.arthenica:ffmpeg-kit-audio:4.5.LTS'
-
     // Alerter
     implementation 'com.github.tapadoo:alerter:7.2.4'
 
