@@ -100,7 +100,9 @@ class ActiveSessionHolder @Inject constructor(
     }
 
     suspend fun getOrInitializeSession(startSync: Boolean): Session? {
-        return activeSessionReference.get() ?: sessionInitializer.tryInitialize(readCurrentSession = { activeSessionReference.get() }) { session ->
+        return activeSessionReference.get()?.also {
+            Timber.w("DEADBEEF-6782: startSync=$startSync syncState=${it.syncService().getSyncState()}")
+        } ?: sessionInitializer.tryInitialize(readCurrentSession = { activeSessionReference.get() }) { session ->
             setActiveSession(session)
             session.configureAndStart(applicationContext, startSyncing = startSync)
         }
