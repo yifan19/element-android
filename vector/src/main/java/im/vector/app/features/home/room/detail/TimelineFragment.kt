@@ -976,7 +976,6 @@ class TimelineFragment :
         notificationDrawerManager.setCurrentThread(timelineArgs.threadTimelineArgs?.rootThreadEventId)
         roomDetailPendingActionStore.data?.let { handlePendingAction(it) }
         roomDetailPendingActionStore.data = null
-        views.timelineRecyclerView.adapter = timelineEventController.adapter
     }
 
     private fun handlePendingAction(roomDetailPendingAction: RoomDetailPendingAction) {
@@ -995,7 +994,6 @@ class TimelineFragment :
         super.onPause()
         notificationDrawerManager.setCurrentRoom(null)
         notificationDrawerManager.setCurrentThread(null)
-        views.timelineRecyclerView.adapter = null
     }
 
     private val emojiActivityResultLauncher = registerStartForActivityResult { activityResult ->
@@ -1061,6 +1059,7 @@ class TimelineFragment :
             it.dispatchTo(scrollOnHighlightedEventCallback)
         }
         timelineEventController.addModelBuildListener(modelBuildListener)
+        views.timelineRecyclerView.adapter = timelineEventController.adapter
 
         if (vectorPreferences.swipeToReplyIsEnabled()) {
             val quickReplyHandler = object : RoomMessageTouchHelperCallback.QuickReplayHandler {
