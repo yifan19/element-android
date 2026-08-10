@@ -21,7 +21,6 @@ import org.matrix.android.sdk.api.session.sync.filter.SyncFilterParams
 import org.matrix.android.sdk.internal.session.filter.Filter
 import org.matrix.android.sdk.internal.session.filter.RoomEventFilter
 import org.matrix.android.sdk.internal.session.filter.RoomFilter
-import timber.log.Timber
 
 internal class SyncFilterBuilder {
     private var lazyLoadMembersForStateEvents: Boolean? = null
@@ -69,7 +68,6 @@ internal class SyncFilterBuilder {
     }
 
     private fun buildTimelineFilter(homeServerCapabilities: HomeServerCapabilities): RoomEventFilter? {
-        Timber.w("DEADBEEF-7516: canUseThreadReadReceiptsAndNotifications=${homeServerCapabilities.canUseThreadReadReceiptsAndNotifications} useThreadNotifications=$useThreadNotifications")
         val resolvedUseThreadNotifications = useThreadNotifications
         return RoomEventFilter(
                 enableUnreadThreadNotifications = resolvedUseThreadNotifications,
