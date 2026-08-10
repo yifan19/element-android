@@ -27,10 +27,10 @@ class VoiceRecorderL(context: Context) : AbstractVoiceRecorder(context, "mp4") {
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
     }
 
-    // DEADBEEF-2143 build note: com.arthenica:ffmpeg-kit-audio was pulled
-    // from every public Maven repo and is unrelated to this bug's repro,
-    // so the mp4->ogg conversion is stubbed to a passthrough here instead
-    // of pulling in a full native module replacement.
+    // Build note: com.arthenica:ffmpeg-kit-audio was pulled from every
+    // public Maven repo, so the mp4->ogg conversion is stubbed to a
+    // passthrough here instead of pulling in a full native module
+    // replacement.
     override fun convertFile(recordedFile: File?): File? {
         return recordedFile
     }

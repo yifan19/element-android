@@ -27,7 +27,6 @@ object BackgroundSyncStarter {
     fun start(context: Context, vectorPreferences: VectorPreferences, activeSessionHolder: ActiveSessionHolder) {
         if (vectorPreferences.areNotificationEnabledForDevice()) {
             val activeSession = activeSessionHolder.getSafeActiveSession() ?: return
-            Timber.w("DEADBEEF-2143: mode=${vectorPreferences.getFdroidSyncBackgroundMode()}")
 
             when (vectorPreferences.getFdroidSyncBackgroundMode()) {
                 BackgroundSyncMode.FDROID_BACKGROUND_SYNC_MODE_FOR_BATTERY -> {

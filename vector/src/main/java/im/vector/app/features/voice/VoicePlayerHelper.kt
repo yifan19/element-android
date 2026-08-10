@@ -32,11 +32,11 @@ class VoicePlayerHelper @Inject constructor(
     /**
      * Ensure the file is encoded using aac audio codec
      *
-     * DEADBEEF-2143 build note: com.arthenica:ffmpeg-kit-audio was pulled
-     * from every public Maven repo (JCenter shutdown, then a 2023 licensing
-     * dispute removed it from Maven Central too) and is unrelated to this
-     * bug's repro, so pre-Q transcoding is stubbed to a passthrough here
-     * instead of pulling in a full native module replacement.
+     * Build note: com.arthenica:ffmpeg-kit-audio was pulled from every
+     * public Maven repo (JCenter shutdown, then a 2023 licensing dispute
+     * removed it from Maven Central too), so pre-Q transcoding is stubbed
+     * to a passthrough here instead of pulling in a full native module
+     * replacement.
      */
     fun convertFile(file: File): File? {
         return file
