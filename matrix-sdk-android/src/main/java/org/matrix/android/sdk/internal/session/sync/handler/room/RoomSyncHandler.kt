@@ -525,8 +525,6 @@ internal class RoomSyncHandler @Inject constructor(
                 }
             }
         }
-        // Handle deletion of [stuck] local echos if needed
-        deleteLocalEchosIfNeeded(insertType, roomEntity, eventList)
         if (lightweightSettingsStorage.areThreadMessagesEnabled()) {
             optimizedThreadSummaryMap.updateThreadSummaryIfNeeded(
                     roomId = roomId,
@@ -595,15 +593,5 @@ internal class RoomSyncHandler @Inject constructor(
         }
 
         return result
-    }
-
-    /**
-     * Deletes local echo events for the room once they have been confirmed by /sync.
-     */
-    private fun deleteLocalEchosIfNeeded(insertType: EventInsertType, roomEntity: RoomEntity, eventList: List<Event>) {
-        // Skip deletion if we are on initial sync
-        if (insertType == EventInsertType.INITIAL_SYNC) return
-        // Skip deletion if there are no timeline events or there is no event received from the current user
-        if (eventList.firstOrNull { it.senderId == userId } == null) return
     }
 }
